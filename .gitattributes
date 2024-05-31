@@ -1,0 +1,3 @@
+figures/*.png !text !filter !merge !diff
+figures/*.gif !text !filter !merge !diff
+KAN/wavelets/animations/*.gif !text !filter !merge !diff
