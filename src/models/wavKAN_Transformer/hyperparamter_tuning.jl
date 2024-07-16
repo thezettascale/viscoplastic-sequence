@@ -1,8 +1,8 @@
-include("../pipeline/data_processing/data_loader.jl")
+include("../../pipeline/data_processing/data_loader.jl")
 include("KAN_Transformer.jl")
-include("../utils.jl")
-include("../pipeline/train.jl")
-include("../hp_parsing.jl")
+include("../../utils.jl")
+include("../../pipeline/train.jl")
+include("../../hp_parsing.jl")
 
 using HyperTuning
 using ConfParser
@@ -48,7 +48,7 @@ function objective(trial)
     @suggest norm in trial
 
     # Parse config
-    conf = ConfParse("wavKAN_Transformer/KAN_Transformer_config.ini")
+    conf = ConfParse("src/models/wavKAN_Transformer/KAN_Transformer_config.ini")
     parse_conf!(conf)
 
     # Use Vanilla_Transformer config
@@ -146,10 +146,10 @@ display(top_parameters(space))
 # Save the best configuration
 @unpack d_model, nhead, dim_feedforward, dropout, num_encoder_layers, num_decoder_layers, max_len, activation, b_size, learning_rate, gamma, step_rate, encoder_wav_one, encoder_wav_two, encoder_wav_three, encoder_wav_four, encoder_wav_five, encoder_wav_six, encoder_wav_seven, encoder_wav_eight, decoder_wav_one, decoder_wav_two, decoder_wav_three, output_wavelet, norm = space
 
-conf = ConfParse("wavKAN_Transformer/KAN_Transformer_config.ini")
+conf = ConfParse("src/models/wavKAN_Transformer/KAN_Transformer_config.ini")
 parse_conf!(conf)
 
-vanilla_conf = ConfParse("Vanilla_Transformer/Transformer_config.ini")
+vanilla_conf = ConfParse("src/models/Vanilla_Transformer/Transformer_config.ini")
 parse_conf!(vanilla_conf)
 
 # # Take vanilla config 
@@ -190,7 +190,7 @@ commit!(conf, "Optimizer", "gamma", string(gamma))
 commit!(conf, "Optimizer", "step_rate", string(step_rate))
 commit!(conf, "Architecture", "norm", string(norm))
 
-save!(conf, "wavKAN_Transformer/KAN_Transformer_config.ini")
+save!(conf, "src/models/wavKAN_Transformer/KAN_Transformer_config.ini")
 
 
 

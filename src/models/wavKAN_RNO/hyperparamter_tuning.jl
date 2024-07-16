@@ -1,8 +1,8 @@
-include("../pipeline/data_processing/data_loader.jl")
+include("../../pipeline/data_processing/data_loader.jl")
 include("KAN_RNO.jl")
-include("../utils.jl")
-include("../pipeline/train.jl")
-include("../hp_parsing.jl")
+include("../../utils.jl")
+include("../../pipeline/train.jl")
+include("../../hp_parsing.jl")
 
 using HyperTuning
 using ConfParser
@@ -38,7 +38,7 @@ function objective(trial)
     wavelet_names = [wav_one, wav_two, wav_three, wav_four, wav_five, wav_six][1:n_layers]
 
     # Parse config
-    conf = ConfParse("wavKAN_RNO/KAN_RNO_config.ini")
+    conf = ConfParse("src/models/wavKAN_RNO/KAN_RNO_config.ini")
     parse_conf!(conf)
 
     # Use Vanilla_RNO config
@@ -113,11 +113,11 @@ display(top_parameters(space))
 # Save the best configuration
 @unpack n_hidden, n_layers, activation, b_size, learning_rate, gamma, step_rate, wav_one, wav_two, wav_three, wav_four, wav_five, wav_six, layer_norm = space
 
-conf = ConfParse("wavKAN_RNO/KAN_RNO_config.ini")
+conf = ConfParse("src/models/wavKAN_RNO/KAN_RNO_config.ini")
 parse_conf!(conf)
 
 # # Use Vanilla_RNO config
-# vanilla_conf = ConfParse("Vanilla_RNO/RNO_config.ini")
+# vanilla_conf = ConfParse("src/models/Vanilla_RNO/RNO_config.ini")
 # parse_conf!(vanilla_conf)
 # n_hidden = retrieve(vanilla_conf, "Architecture", "n_hidden")
 # n_layers = retrieve(vanilla_conf, "Architecture", "num_layers")
@@ -142,7 +142,7 @@ commit!(conf, "Optimizer", "gamma", string(gamma))
 commit!(conf, "Optimizer", "step_rate", string(step_rate))
 commit!(conf, "Architecture", "norm", string(layer_norm))
 
-save!(conf, "wavKAN_RNO/KAN_RNO_config.ini")
+save!(conf, "src/models/wavKAN_RNO/KAN_RNO_config.ini")
 
 
 

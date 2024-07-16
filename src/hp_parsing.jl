@@ -5,7 +5,7 @@ export set_hyperparams
 using ConfParser
 
 function set_RNO_params()
-    conf = ConfParse("Vanilla_RNO/RNO_config.ini")
+    conf = ConfParse("src/models/Vanilla_RNO/RNO_config.ini")
     parse_conf!(conf)
 
     ENV["p"] = retrieve(conf, "Loss", "p")
@@ -24,7 +24,7 @@ function set_RNO_params()
 end
 
 function set_KAN_RNO_params()
-    conf = ConfParse("wavKAN_RNO/KAN_RNO_config.ini")
+    conf = ConfParse("src/models/wavKAN_RNO/KAN_RNO_config.ini")
     parse_conf!(conf)
 
     ENV["p"] = retrieve(conf, "Loss", "p")
@@ -54,7 +54,7 @@ function set_KAN_RNO_params()
 end
 
 function set_Transformer_params()
-    conf = ConfParse("Vanilla_Transformer/Transformer_config.ini")
+    conf = ConfParse("src/models/Vanilla_Transformer/Transformer_config.ini")
     parse_conf!(conf)
 
     ENV["p"] = retrieve(conf, "Loss", "p")
@@ -78,7 +78,7 @@ function set_Transformer_params()
 end
 
 function set_KAN_Transformer_params()
-    conf = ConfParse("wavKAN_Transformer/KAN_Transformer_config.ini")
+    conf = ConfParse("src/models/wavKAN_Transformer/KAN_Transformer_config.ini")
     parse_conf!(conf)
 
     ENV["p"] = retrieve(conf, "Loss", "p")

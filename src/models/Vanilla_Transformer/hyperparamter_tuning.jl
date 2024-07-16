@@ -1,7 +1,7 @@
-include("../pipeline/data_processing/data_loader.jl")
+include("../../pipeline/data_processing/data_loader.jl")
 include("Transformer.jl")
-include("../utils.jl")
-include("../pipeline/train.jl")
+include("../../utils.jl")
+include("../../pipeline/train.jl")
 
 using HyperTuning
 using ConfParser
@@ -32,7 +32,7 @@ function objective(trial)
     @suggest step_rate in trial
 
     # Parse config
-    conf = ConfParse("Vanilla_Transformer/Transformer_config.ini")
+    conf = ConfParse("src/models/Vanilla_Transformer/Transformer_config.ini")
     parse_conf!(conf)
 
     # Create model
@@ -99,7 +99,7 @@ display(top_parameters(space))
 # Save the best configuration
 @unpack d_model, nhead, dim_feedforward, dropout, num_encoder_layers, num_decoder_layers, max_len, activation, b_size, learning_rate, gamma, step_rate = space
 
-conf = ConfParse("Vanilla_Transformer/Transformer_config.ini")
+conf = ConfParse("src/models/Vanilla_Transformer/Transformer_config.ini")
 parse_conf!(conf)
 
 commit!(conf, "Architecture", "d_model", string(d_model))
@@ -115,7 +115,7 @@ commit!(conf, "Optimizer", "learning_rate", string(learning_rate))
 commit!(conf, "Optimizer", "gamma", string(gamma))
 commit!(conf, "Optimizer", "step_rate", string(step_rate))
 
-save!(conf, "Vanilla_Transformer/Transformer_config.ini")
+save!(conf, "src/models/Vanilla_Transformer/Transformer_config.ini")
 
 
 
