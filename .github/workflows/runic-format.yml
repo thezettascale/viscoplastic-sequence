@@ -1,0 +1,51 @@
+name: Runic formatting
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  runic:
+    name: Format .jl files with Runic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Format with Runic
+        uses: fredrikekre/runic-action@v1
+        with:
+          version: '1'
+          format_files: true
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            git diff
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changes
+        if: steps.check-changes.outputs.changes == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "Format .jl files with Runic [skip ci]" || exit 0
+          git push
+
+      - name: Fail if unformatted files on PR
+        if: steps.check-changes.outputs.changes == 'true' && github.event_name == 'pull_request'
+        run: |
+          echo "::error::Some Julia files are not properly formatted with Runic."
+          echo "::error::Please run 'runic --inplace .' locally or wait for the auto-format commit on main branch."
+          exit 1

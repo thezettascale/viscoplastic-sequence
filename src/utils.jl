@@ -1,82 +1,63 @@
-module UTILS
-
-export loss_fcn, BIC, UnitGaussianNormaliser, unit_encode, unit_decode, MinMaxNormaliser, minmax_encode, minmax_decode, log_csv, node_mul_1D, node_mul_2D
-
 using Statistics
-using Flux
-using CUDA, KernelAbstractions, Tullio
 
-p = parse(Float32, get(ENV, "p", "2.0"))
+const ACTIVATION_MAP = Dict{String, Function}(
+    "relu" => NNlib.relu,
+    "leakyrelu" => NNlib.leakyrelu,
+    "tanh" => NNlib.hardtanh,
+    "sigmoid" => NNlib.hardsigmoid,
+    "swish" => NNlib.hardswish,
+    "gelu" => NNlib.gelu,
+    "selu" => NNlib.selu,
+)
 
-function loss_fcn(m, x, y)
-    return sum(abs.(m(x, y) .- y).^p)
+get_activation(name::AbstractString) = ACTIVATION_MAP[name]
+
+batch_mul(x, y) = x .* y
+three_mul(x, y, z) = x .* y .* z
+
+function node_mul(y::AbstractArray{T, 3}, w::AbstractMatrix{T}) where {T}
+    output = reshape(w, size(w, 1), size(w, 2), 1) .* y
+    return reshape(sum(output; dims = 1), size(w, 2), size(y, 3))
+end
+function node_mul(y::AbstractArray{T, 4}, w::AbstractMatrix{T}) where {T}
+    output = reshape(w, size(w, 1), size(w, 2), 1, 1) .* y
+    return reshape(sum(output; dims = 1), size(w, 2), size(y, 3), size(y, 4))
 end
 
-function BIC(model, x, loss)
-    n = size(x)[end] # Number of samples
-    k = sum(length, Flux.params(model)) # Number of parameters
-    return 2 * loss + k * log(n)
+const NORM_EPS = Float32(1.0e-5)
+
+struct UnitGaussianNormaliser{T <: AbstractFloat}
+    mu::T
+    sigma::T
 end
 
-eps = Float32(1e-5)
+UnitGaussianNormaliser(x::AbstractArray) =
+    UnitGaussianNormaliser(Float32(mean(x)), Float32(std(x)))
 
-### Normalisers really help on this dataset! ###
-struct UnitGaussianNormaliser{T<:AbstractFloat}
-    μ::T
-    σ::T
-    ε::T
+encode(n::UnitGaussianNormaliser, x) = (x .- n.mu) ./ (n.sigma .+ NORM_EPS)
+decode(n::UnitGaussianNormaliser, x) = x .* (n.sigma .+ NORM_EPS) .+ n.mu
+
+struct MinMaxNormaliser{T <: AbstractFloat}
+    lo::T
+    hi::T
 end
 
-function unit_encode(normaliser::UnitGaussianNormaliser, x::AbstractArray)
-    return (x .- normaliser.μ) ./ (normaliser.σ .+ normaliser.ε)
+MinMaxNormaliser(x::AbstractArray) = MinMaxNormaliser(Float32(minimum(x)), Float32(maximum(x)))
+
+encode(n::MinMaxNormaliser, x) = (x .- n.lo) ./ (n.hi - n.lo)
+decode(n::MinMaxNormaliser, x) = x .* (n.hi - n.lo) .+ n.lo
+
+function loss_fcn(y_pred, y; p::Real = 2)
+    return sum(abs.(y_pred .- y) .^ p)
 end
 
-function unit_decode(normaliser::UnitGaussianNormaliser, x::AbstractArray)
-    return x .* (normaliser.σ .+ normaliser.ε) .+ normaliser.μ
+function BIC(model, n_samples::Int, loss_val::Real)
+    k = Lux.parameterlength(model)
+    return 2 * loss_val + k * log(n_samples)
 end
 
-function UnitGaussianNormaliser(x::AbstractArray)
-    data_mean = Statistics.mean(x)
-    data_std = Statistics.std(x)
-    return UnitGaussianNormaliser(data_mean, data_std, eps)
-end
-
-struct MinMaxNormaliser{T<:AbstractFloat}
-    min::T
-    max::T
-end
-
-function minmax_encode(normaliser::MinMaxNormaliser, x::AbstractArray)
-    return (x .- normaliser.min) ./ (normaliser.max - normaliser.min)
-end
-
-function minmax_decode(normaliser::MinMaxNormaliser, x::AbstractArray)
-    return x .* (normaliser.max - normaliser.min) .+ normaliser.min
-end
-
-function MinMaxNormaliser(x::AbstractArray)
-    data_min = minimum(x)
-    data_max = maximum(x)
-    return MinMaxNormaliser(data_min, data_max)
-end
-
-# Log the loss to CSV
-function log_csv(epoch, train_loss, test_loss, BIC, time, file_name)
-    open(file_name, "a") do file
-        write(file, "$epoch,$time,$train_loss,$test_loss,$BIC\n")
+function log_csv(epoch, train_loss, test_loss, bic, elapsed, file_name)
+    return open(file_name, "a") do f
+        write(f, "$epoch,$elapsed,$train_loss,$test_loss,$bic\n")
     end
-end
-
-# This is a node of the KAN. It sums wavelets in a manner presented by the wavKAN paper.
-
-function node_mul_1D(y, w)
-    output = @tullio out[i, o, b] := w[i, o] * y[i, o, b]
-    return reshape(sum(output, dims=1), size(w)[2], size(y)[end])
-end
-
-function node_mul_2D(y, w)
-    output = @tullio out[i, o, l, b] := w[i, o] * y[i, o, l, b]
-    return reshape(sum(output, dims=1), size(w)[2], size(y)[3], size(y)[end])
-end
-
 end

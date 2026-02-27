@@ -1,0 +1,27 @@
+name = "WavKANSequence"
+version = "0.2.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+ConfParser = "88353bc9-fd38-507d-a820-d3b43837d6b9"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+HyperTuning = "ddfa78db-9111-4329-a6bd-d4ed85ceb229"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
+Lux = "b2108857-7c20-44ae-9111-449ecde12c47"
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
+MLDataDevices = "7e8f7934-dd98-4c1a-8fe8-92b47a384d40"
+MLUtils = "f1d291b0-491e-4a28-83b9-f70985020b54"
+NNlib = "872c559c-99b0-510c-b3b7-b6c96a88d5cd"
+Optimisers = "3bd65402-5787-11e9-1adc-39752487f4e2"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+ProgressBars = "49802e3a-d2f1-5c88-81d8-b72133a6f568"
+PythonPlot = "274fc56d-3b97-40fa-a1cd-1b4a50311bf9"
+Reactant = "3c362404-f566-11ee-1572-e11a4b42c853"
+Runic = "62bfec6d-59d7-401d-8490-b29ee721c001"
+cuDNN = "02a925ec-e4fe-4b08-9a7e-0d78e3d38ccd"
+
+[compat]
+julia = "1.11"
