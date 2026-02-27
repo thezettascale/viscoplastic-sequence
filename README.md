@@ -32,6 +32,17 @@ $$\sigma(x,t) = E(x)\epsilon(x,t) + v(x) \frac{\partial u(x,t)}{\partial t}$$
 
 where $E(x)$ is Young's modulus and $v(x)$ is viscosity, both piecewise constant across the three phases. This dataset is difficult for the Transformer to learn, but straightforward for the RNO.
 
+<table align="center">
+<tr>
+<td align="center"><img src="figures/Transformer_visco_prediction.gif" width="100%"></td>
+<td align="center"><img src="figures/RNO_visco_prediction.gif" width="100%"></td>
+</tr>
+<tr>
+<td align="center"><em>Transformer. 4,209,205 params, purely data-driven</em></td>
+<td align="center"><em>Recurrent Neural Operator. 52 params + inductive bias</em></td>
+</tr>
+</table>
+
 ## References
 
 - [Bozorgasl & Chen (2024). Wav-KAN: Wavelet Kolmogorov-Arnold Networks.](https://arxiv.org/abs/2405.12832)
