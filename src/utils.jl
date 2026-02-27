@@ -24,7 +24,7 @@ function node_mul(y::AbstractArray{T, 4}, w::AbstractMatrix{T}) where {T}
     return reshape(sum(output; dims = 1), size(w, 2), size(y, 3), size(y, 4))
 end
 
-const NORM_EPS = Float32(1e-5)
+const NORM_EPS = Float32(1.0e-5)
 
 struct UnitGaussianNormaliser{T <: AbstractFloat}
     mu::T
@@ -57,7 +57,7 @@ function BIC(model, n_samples::Int, loss_val::Real)
 end
 
 function log_csv(epoch, train_loss, test_loss, bic, elapsed, file_name)
-    open(file_name, "a") do f
+    return open(file_name, "a") do f
         write(f, "$epoch,$elapsed,$train_loss,$test_loss,$bic\n")
     end
 end

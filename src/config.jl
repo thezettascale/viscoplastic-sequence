@@ -54,7 +54,7 @@ function KANRNOConfig(path::String)
     parse_conf!(conf)
     num_layers = parse(Int, retrieve(conf, "Architecture", "num_layers"))
     wav_keys = ["wav_one", "wav_two", "wav_three", "wav_four", "wav_five", "wav_six"]
-    wavelet_names = [retrieve(conf, "Architecture", k) for k in wav_keys[1:num_layers]]
+    wavelet_names = [retrieve(conf, "Architecture", k) for k in wav_keys[1:(num_layers + 1)]]
     return KANRNOConfig(
         parse(Int, retrieve(conf, "Architecture", "n_hidden")),
         num_layers,
@@ -174,4 +174,3 @@ function load_config(model_name::String)
     )
     return configs[model_name]()
 end
-

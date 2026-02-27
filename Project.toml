@@ -21,7 +21,6 @@ ProgressBars = "49802e3a-d2f1-5c88-81d8-b72133a6f568"
 PythonPlot = "274fc56d-3b97-40fa-a1cd-1b4a50311bf9"
 Reactant = "3c362404-f566-11ee-1572-e11a4b42c853"
 Runic = "62bfec6d-59d7-401d-8490-b29ee721c001"
-Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
 cuDNN = "02a925ec-e4fe-4b08-9a7e-0d78e3d38ccd"
 
 [compat]
